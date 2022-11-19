@@ -29,5 +29,12 @@ namespace Design.Documents.Controllers
             })
             .ToArray();
         }
+
+        [HttpGet]
+        [Route("Test")]
+        public IActionResult GetTest()
+        {
+            return Ok("Test complete");
+        }
     }
 }
