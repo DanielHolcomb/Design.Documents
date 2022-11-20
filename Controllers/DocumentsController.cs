@@ -20,13 +20,13 @@ namespace Design.Documents.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var credential = new ServiceAccountCredential(new ServiceAccountCredential.Initializer(_config.GetSection("GoogleApi:Email").Value)
+            var credential = new ServiceAccountCredential(new ServiceAccountCredential.Initializer(_config.GetSection("GoogleApiEmail").Value)
             {
                 Scopes = new[] {
                     DocsService.Scope.Documents,
                     DriveService.Scope.Drive
                 }
-            }.FromPrivateKey(_config.GetSection("GoogleApi:PrivateKey").Value)); ;
+            }.FromPrivateKey(_config.GetSection("GoogleApiPrivateKey").Value)); ;
 
             var docsService = new DocsService(new BaseClientService.Initializer()
             {
