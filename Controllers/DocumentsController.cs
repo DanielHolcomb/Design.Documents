@@ -24,13 +24,13 @@ namespace Design.Documents.Controllers
         {
             try
             {
-                var credential = new ServiceAccountCredential(new ServiceAccountCredential.Initializer(_config.GetSection("GoogleApiEmail").Value)
+                var credential = new ServiceAccountCredential(new ServiceAccountCredential.Initializer(_config.GetSection("GoogleApi:Email").Value)
                 {
                     Scopes = new[] {
                     DocsService.Scope.Documents,
                     DriveService.Scope.Drive
                 }
-                }.FromPrivateKey(_config.GetSection("Private").Value));
+                }.FromPrivateKey(_config.GetSection("GoogleApi:PrivateKey").Value));
 
                 var docsService = new DocsService(new BaseClientService.Initializer()
                 {
