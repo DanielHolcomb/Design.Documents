@@ -22,7 +22,7 @@ namespace Design.Documents.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(_config.GetSection("TestSetting").Value);
+            return Ok(_config.GetSection("Private").Value);
             try
             {
                 var credential = new ServiceAccountCredential(new ServiceAccountCredential.Initializer(_config.GetSection("GoogleApiEmail").Value)
@@ -31,7 +31,7 @@ namespace Design.Documents.Controllers
                     DocsService.Scope.Documents,
                     DriveService.Scope.Drive
                 }
-                }.FromPrivateKey(_config.GetSection("GoogleApiPrivateKey").Value)); ;
+                }.FromPrivateKey(_config.GetSection("Private").Value));
 
                 var docsService = new DocsService(new BaseClientService.Initializer()
                 {
