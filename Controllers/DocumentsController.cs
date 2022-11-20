@@ -22,6 +22,7 @@ namespace Design.Documents.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
+            return Ok(_config.GetSection("TestSetting").Value);
             try
             {
                 var credential = new ServiceAccountCredential(new ServiceAccountCredential.Initializer(_config.GetSection("GoogleApiEmail").Value)
