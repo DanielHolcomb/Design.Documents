@@ -11,41 +11,50 @@ namespace Design.Documents.Controllers
     public class DocumentsController : Controller
     {
         private readonly IConfiguration _config;
+        private readonly ILogger<DocumentsController> _logger;
 
-        public DocumentsController(IConfiguration config)
+        public DocumentsController(IConfiguration config, ILogger<DocumentsController> logger)
         {
             _config = config;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var credential = new ServiceAccountCredential(new ServiceAccountCredential.Initializer(_config.GetSection("GoogleApiEmail").Value)
+            try
             {
-                Scopes = new[] {
+                var credential = new ServiceAccountCredential(new ServiceAccountCredential.Initializer(_config.GetSection("GoogleApiEmail").Value)
+                {
+                    Scopes = new[] {
                     DocsService.Scope.Documents,
                     DriveService.Scope.Drive
                 }
-            }.FromPrivateKey(_config.GetSection("GoogleApiPrivateKey").Value)); ;
+                }.FromPrivateKey(_config.GetSection("GoogleApiPrivateKey").Value)); ;
 
-            var docsService = new DocsService(new BaseClientService.Initializer()
+                var docsService = new DocsService(new BaseClientService.Initializer()
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = "design-documents-goog"
+
+                });
+
+                var driveService = new DriveService(new BaseClientService.Initializer()
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = "design-documents-goog"
+
+                });
+
+                var filesRequest = driveService.Files.List();
+                var files = filesRequest.Execute();
+                var request = docsService.Documents.Get("1Emy2vaxH6Blnw0BL-cr5EcsU8AKIM4GvOWJTn7SrKDg");
+                return Ok(files);
+            }
+            catch(Exception ex)
             {
-                HttpClientInitializer = credential,
-                ApplicationName = "design-documents-goog"
-
-            });
-
-            var driveService = new DriveService(new BaseClientService.Initializer()
-            {
-                HttpClientInitializer = credential,
-                ApplicationName = "design-documents-goog"
-
-            });
-
-            var filesRequest = driveService.Files.List();
-            var files = filesRequest.Execute();
-            var request = docsService.Documents.Get("1Emy2vaxH6Blnw0BL-cr5EcsU8AKIM4GvOWJTn7SrKDg");
-            return Ok(files);
+                return BadRequest(ex.Message);
+            }
         }
 
 
